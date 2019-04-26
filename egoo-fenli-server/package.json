@@ -1,0 +1,31 @@
+{
+  "name": "egoo-fenli-server",
+  "version": "1.0.0",
+  "description": "egoo-fenli-admin api",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "egoo",
+    "admin",
+    "koa",
+    "api"
+  ],
+  "author": "duang",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "gd-bmp": "^1.2.4",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.5.4",
+    "xss": "^1.0.6"
+  }
+}
