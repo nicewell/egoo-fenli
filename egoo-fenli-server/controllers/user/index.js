@@ -131,7 +131,7 @@ const login = async (ctx, next) => {
       code: 200,
       msg: '登录成功!',
       data: {
-        id: res._id,
+        id: _res._id,
         name: _res.name,
         token: _res.token
       }
