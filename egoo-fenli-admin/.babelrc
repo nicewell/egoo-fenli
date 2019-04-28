@@ -1,0 +1,14 @@
+// npm install babel-plugin-import --save-dev
+
+// .babelrc
+{
+  "plugins": [
+    [
+      "import",
+      {
+        "libraryName": "iview",
+        "libraryDirectory": "src/components"
+      }
+    ]
+  ]
+}
