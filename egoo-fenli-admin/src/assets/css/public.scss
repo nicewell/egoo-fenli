@@ -1,4 +1,45 @@
-*{
+* {
   margin: 0;
   padding: 0;
+}
+/* // 登录注册css */
+.user-form {
+  position: relative;
+  padding: 30px 0;
+  width: 60%;
+  margin: 0 auto;
+}
+.code-item {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+.code-input {
+  flex: 1;
+}
+.code-img {
+  position: relative;
+  height: 30px;
+  margin-left: 30px;
+  cursor: pointer;
+  img {
+    display: block;
+    width: auto;
+    height: 100%;
+  }
+}
+.btn-box {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  & > span {
+    color: #2d8cf0;
+    font-size: 12px;
+    text-decoration: underline;
+    margin-left: 10px;
+    cursor: pointer;
+  }
 }

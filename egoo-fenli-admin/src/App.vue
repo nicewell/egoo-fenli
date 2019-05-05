@@ -5,5 +5,7 @@
 </template>
 
 <style lang="scss">
-
+* {
+  font-style: normal;
+}
 </style>
