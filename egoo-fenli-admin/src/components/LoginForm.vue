@@ -7,7 +7,7 @@
       <FormItem label="密码">
         <Input v-model="userData.pwd" type="password" />
       </FormItem>
-      <FormItem label="确认密码">
+      <FormItem label="确认密码" v-if="typeData.submit==='register'">
         <Input v-model="userData.rePwd" type="password" />
       </FormItem>
       <FormItem label="验证码">
@@ -20,18 +20,23 @@
       </FormItem>
     </Form>
     <div class="btn-box">
-      <Button type="primary" @click="submit">注册</Button>
-      <router-link to="/login" tag="span">已有账户?请登录</router-link>
+      <Button type="primary" @click="submit">{{typeData.text}}</Button>
+      <router-link :to="typeData.to" tag="span">{{typeData.des}}</router-link>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'Login',
+  name: 'LoginForm',
   props: {
-    type: {
-      'type': String,
-      'default': 'login'
+    typeData: {
+      'type': Object,
+      'default': {
+        text: '注册',
+        to: '/login',
+        des: '已有账户?请登录',
+        submit: 'register'
+      }
     },
     userData: {
       'type': Object,
@@ -42,15 +47,11 @@ export default {
         code: '',
         codeToken: ''
       }
-    },
-    codeSrc: {
-      'type': String,
-      'default': 'https://placehold.it/200x60'
     }
   },
   data () {
     return {
-      //
+      codeSrc: 'https://placehold.it/200x60'
     }
   },
   async mounted () {
@@ -64,7 +65,7 @@ export default {
       this.codeSrc = data.img
     },
     async submit () {
-      let res = await this.$api.user.submit({ ...this.userData })
+      let res = await this.$api.user[this.typeData.submit]({ ...this.userData })
       if (res.data.code !== 200) {
         this.$Message.info(res.data.msg)
         this.getCode()
@@ -72,6 +73,10 @@ export default {
       }
       this.$Message.info(res.data.msg)
       this.$router.push('/')
+    },
+    // 存入state
+    saveState(){
+      
     }
   }
 }

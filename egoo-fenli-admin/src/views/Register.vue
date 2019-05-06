@@ -1,65 +1,37 @@
 <template>
-  <div class="user-form">
-    <Form :model="userData" label-position="left" :label-width="100">
-      <FormItem label="用户名">
-        <Input v-model="userData.name" />
-      </FormItem>
-      <FormItem label="密码">
-        <Input v-model="userData.pwd" type="password" />
-      </FormItem>
-      <FormItem label="确认密码">
-        <Input v-model="userData.rePwd" type="password" />
-      </FormItem>
-      <FormItem label="验证码">
-        <div class="code-item">
-          <div class="code-input"><Input v-model="userData.code" /></div>
-          <div class="code-img" @click="getCode">
-            <img :src="codeSrc" alt="code" />
-          </div>
-        </div>
-      </FormItem>
-    </Form>
-    <div class="btn-box">
-      <Button type="primary" @click="register">注册</Button>
-      <router-link to="/login" tag="span">已有账户?请登录</router-link>
-    </div>
+  <div>
+    <LoginForm :typeData=typeData :userData=userData></LoginForm>
   </div>
 </template>
 <script>
+import LoginForm from '@/components/LoginForm'
 export default {
-  name: 'Login',
+  name: 'Register',
+  components: {
+    LoginForm
+  },
   data () {
     return {
+      typeData: {
+        text: '注册',
+        to: '/login',
+        des: '已有账户?请登录',
+        submit: 'register'
+      },
       userData: {
         name: '',
         pwd: '',
         rePwd: '',
         code: '',
         codeToken: ''
-      },
-      codeSrc: 'https://placehold.it/200x60'
+      }
     }
   },
-  async mounted () {
-    this.getCode()
+  mounted () {
+    //
   },
   methods: {
-    async getCode () {
-      let res = await this.$api.user.getCode()
-      let data = res.data.data
-      this.userData.codeToken = data.token
-      this.codeSrc = data.img
-    },
-    async register () {
-      let res = await this.$api.user.register({ ...this.userData })
-      if (res.data.code !== 200) {
-        this.$Message.info(res.data.msg)
-        this.getCode()
-        return
-      }
-      this.$Message.info(res.data.msg)
-      this.$router.push('/')
-    }
+    //
   }
 }
 </script>
