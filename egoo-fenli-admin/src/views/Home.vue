@@ -10,34 +10,41 @@
       <div class="nav-end">
         <Input search placeholder="Enter something..." />
         <Button icon="md-add" type="primary" @click="add">添加</Button>
-        <span>
-          <img src="../assets/img/github-circle-black-transparent.svg" alt="">
-        </span>
+        <Dropdown placement="bottom-end">
+          <span>
+            <img src="../assets/img/github-circle-black-transparent.svg" alt="">
+          </span>
+          <DropdownMenu slot="list">
+            <DropdownItem>{{user.name}}</DropdownItem>
+            <DropdownItem @on-click="logout">退出</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </div>
     </div>
     <div class="table">
       <Table highlight-row :columns="columns" :data="list" @on-current-change="select"></Table>
     </div>
     <div class="paging">
-      <Page :total="40" size="small" show-total @on-change="changePage" />
+      <Page :total="total" :current="current" :page-size="size" size="small" show-total @on-change="changePage" />
     </div>
 
     <Modal v-model="isEdit" @on-ok="ok" @on-cancel="cancel">
-      <Form :model="hold" label-position="left">
+      <Form :model="form" label-position="left">
         <FormItem label="游戏名称">
-          <Input v-model="hold.name" />
+          <Input v-model="form.name" />
         </FormItem>
         <FormItem label="别名">
-          <Input v-model="hold.alias" />
+          <Input v-model="form.alias" />
         </FormItem>
         <FormItem label="分离地址">
-          <Input v-model="hold.path" />
+          <Input v-model="form.path" />
         </FormItem>
       </Form>
     </Modal>
   </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'Home',
   compontes: {
@@ -47,11 +54,12 @@ export default {
     return {
       homeLink: '//github.com/nicewell',
       isEdit: false,
-      hold: {
+      defaultForm: {
         name: '',
         alias: '',
         path: ''
       },
+      form: null,
       columns: [
         {
           title: '游戏名称',
@@ -81,7 +89,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.edit(params.index)
+                    this.edit(params.row)
                   }
                 }
               }, '修改'),
@@ -92,7 +100,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.delete(params.index)
+                    this.delete(params.row)
                   }
                 }
               }, '删除')
@@ -100,51 +108,94 @@ export default {
           }
         }
       ],
-      list: [
-        {
-          name: 'John Brown',
-          alias: 18,
-          path: 'New,York,Lake,Park'
-        }
-      ]
+      list: [],
+      total: 0,
+      current: 1,
+      size: 10,
+      editId: null
     }
   },
   computed: {
-    //
+    ...mapState(['user'])
+  },
+  created () {
+    this.clearState()
+  },
+  mounted () {
+    this.getData()
   },
   methods: {
+    ...mapActions(['removeToken']),
+    logout () {
+      console.log('---------')
+      this.removeToken()
+      this.$router.push('/login')
+    },
     add () {
       this.isEdit = true
-      console.log('add')
     },
-    delete (index) {
-      console.log(index)
-      this.$Message.info('This is a info tip')
+    async delete (row) {
+      let id = row._id
+      let res = await this.$api.address.delAddress(id)
+      let { code, msg } = { ...res.data }
+      this.$Message.info(msg)
+      if (code !== 200) { return }
+      this.getData()
     },
     select (currentRow) {
       console.log({ currentRow })
     },
-    edit (currentRow) {
+    edit (row) {
       this.isEdit = true
-      console.log({ currentRow })
+      this.form = { ...row }
+      this.editId = row._id
     },
-    changePage (page) {
-      console.log(page)
+    changePage (current) {
+      this.current = current
+      this.getData()
+    },
+    async addAddress () {
+      let form = Object.assign({}, this.form, { alias: this.form.alias.split(',') })
+      let res = await this.$api.address.addAddress(form)
+      let { code } = { ...res.data }
+      if (code !== 200) { return }
+      this.getData()
+      this.clearState()
+    },
+    async editAddress (id) {
+      let form = Object.assign({}, this.form, { alias: this.form.alias.split(',') })
+      let res = await this.$api.address.editAddress(id, form)
+      let { code } = { ...res.data }
+      if (code !== 200) { return }
+      this.getData()
+      this.clearState()
     },
     ok () {
-      console.log('Clicked ok')
+      if (this.editId) {
+        this.editAddress(this.editId)
+      } else {
+        this.addAddress()
+      }
     },
     cancel () {
       console.log('Clicked cancel')
+    },
+    clearState () {
+      this.form = Object.assign({}, this.defaultForm)
+      this.isEdit = false
+      this.editId = null
+      this.current = 1
+    },
+    async getData () {
+      let res = await this.$api.address.getAddress({ size: this.size, page: this.current })
+      let list = res.data.data.list
+      let { total } = { ...res.data.data.pagination }
+      this.total = total
+      list.forEach(item => {
+        item.alias = item.alias.join(',')
+      })
+      this.list = list
     }
-  },
-  async mounted () {
-    let res = await this.$api.address.getAddress()
-    let list = res.data.data.list
-    list.forEach(item => {
-      item.alias = item.alias.join(',')
-    })
-    this.list = list
   }
 }
 </script>

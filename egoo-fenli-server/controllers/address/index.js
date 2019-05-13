@@ -96,10 +96,10 @@ const editAddress = async (ctx, next) => {
   let _id = ctx.params.id
   try {
     let { name, path, alias } = ctx.request.body
-    let isChecked = await checkAlias(ctx)
-    if (!isChecked) {
-      return
-    }
+    // let isChecked = await checkAlias(ctx)
+    // if (!isChecked) {
+    //   return
+    // }
     let res = await Address.findOneAndUpdate({ _id }, { name, path, alias })
     if (res === null) {
       ctx.body = {

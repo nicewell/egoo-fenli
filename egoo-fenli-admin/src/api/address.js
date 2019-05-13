@@ -10,9 +10,16 @@ const address = {
   },
   // 添加
   addAddress (params) {
-    return axios.get(`addAddress`, { params })
-  }
+    return axios.post(`addAddress`, params)
+  },
+  // 修改
+  editAddress (id, params) {
+    return axios.put(`editAddress/${id}`, params)
+  },
   // 删除
+  delAddress (id) {
+    return axios.delete(`delAddress/${id}`)
+  }
 }
 
 export default address

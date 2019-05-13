@@ -26,6 +26,8 @@
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'LoginForm',
   props: {
@@ -58,6 +60,7 @@ export default {
     this.getCode()
   },
   methods: {
+    ...mapActions(['saveToken']),
     async getCode () {
       let res = await this.$api.user.getCode()
       let data = res.data.data
@@ -71,12 +74,10 @@ export default {
         this.getCode()
         return
       }
+      // 存入state
+      this.saveToken(res.data.data)
       this.$Message.info(res.data.msg)
       this.$router.push('/')
-    },
-    // 存入state
-    saveState(){
-      
     }
   }
 }
